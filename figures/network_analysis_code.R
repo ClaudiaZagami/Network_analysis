@@ -1,10 +1,5 @@
 ###############################NETWORK ANALYSIS
 #creating lists for network analysis 
-
-#if (!requireNamespace("BiocManager", quietly = TRUE))
-# install.packages("BiocManager")
-#BiocManager::install("OmnipathR")
-
 library(readxl)
 library(dplyr)
 library(OmnipathR)
@@ -13,33 +8,24 @@ library(dplyr) # data manipulation
 library(ggforce) # extension of ggplot. 
 library(ggplot2)
 
-setwd("C:/Users/czagami/NanostringData")
-
 zonality <- read_excel("zonality.xlsx")
 zonalitydf <- as.data.frame(zonality, col.names = T, row.names = T)
 rownames(zonalitydf) <- zonalitydf[,1]
 zonalitydf[,1] <- NULL
 
 
-#import interactions from omnipath
-all_interactions <-  OmnipathR::import_all_interactions(
-  organism = 9606,
-  directed = 'no'
-)
-
-#filter the interactions to only contain protein-protein and TF-TG interactions
-
-#get_interaction_resources()
-#interactions = import_omnipath_interactions() %>% as_tibble()
-all_interactions %>% distinct(type) #checking all the interactions present 
-
-
-interactions <- dplyr::filter(all_interactions, type == "post_translational" | type == "transcriptional")
-
 #Foveola epithelium 
 fov_epi <- select(zonalitydf,'FOV EPI')
 fov_epi_filtr <- filter(fov_epi, `FOV EPI` > 11.0)
 fov_epi_express <- c(rownames(fov_epi_filtr))
+
+if (!requireNamespace("BiocManager", quietly = TRUE))
+  install.packages("BiocManager")
+BiocManager::install("OmnipathR")
+
+
+get_interaction_resources()
+interactions = import_omnipath_interactions() %>% as_tibble()
 
 interactions_fov_epi <- filter(interactions, source_genesymbol %in% fov_epi_express & 
                                  target_genesymbol %in% fov_epi_express) 
