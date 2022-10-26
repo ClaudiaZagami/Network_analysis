@@ -36,6 +36,11 @@ all_interactions %>% distinct(type) #checking all the interactions present
 
 interactions <- dplyr::filter(all_interactions, type == "post_translational" | type == "transcriptional")
 
+unique(all_interactions$dorothea_level)
+#Filter for dorotheal levels a, b, c and NAs.
+
+interactions <- dplyr::filter(all_interactions, dorothea_level != "D" | dorothea_level != "A;D")
+
 #Foveola epithelium 
 fov_epi <- select(zonalitydf,'FOV EPI')
 fov_epi_filtr <- filter(fov_epi, `FOV EPI` > 11.0)
